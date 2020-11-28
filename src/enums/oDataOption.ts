@@ -1,4 +1,4 @@
-export enum ODataOptions {
+export enum ODataOption {
     OrderBy = 1,
     Top = 2,
     Skip = 3,
