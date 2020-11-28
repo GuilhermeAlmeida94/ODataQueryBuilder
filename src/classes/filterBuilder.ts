@@ -2,6 +2,7 @@ import { QueryFragment } from './queryFragment'
 import { ODataOption } from '../enums/oDataOption'
 import { ValueOperator } from '../enums/valueOperator';
 import { StringOperator } from '../enums/stringOperator';
+import { BuilderOptions } from '../interfaces/builderOptions';
 
 type filterExpressionType = string | number | boolean | Date;
 
@@ -9,8 +10,11 @@ export class FilterBuilder {
     
     private filters: QueryFragment[] = [];
 
+    constructor(
+        private options: BuilderOptions) {}
+
     public valueFilter(field: string, operator: ValueOperator, value: filterExpressionType): this {
-        if (value !== null) {
+        if (!this.options.ignoreNull || value) {
             this.filters.push(
                 new QueryFragment(ODataOption.Filter, `${field} ${operator} ${this.getValue(value)}`)
             );
@@ -19,7 +23,7 @@ export class FilterBuilder {
     }
 
     public stringFilter(field: string, operator: StringOperator, value: string): this {
-        if (value !== null) {
+        if (!this.options.ignoreNull || value) {
             this.filters.push(
                 new QueryFragment(ODataOption.Filter, `${field}.${operator}('${value}')`)
             );
@@ -33,7 +37,7 @@ export class FilterBuilder {
     }
 
     private addLogic(phrase: string, checkLength: boolean): this {
-        if (!checkLength || this.filters.length > 1)
+        if (!checkLength || this.filters.length > 0)
             this.filters.push(new QueryFragment(ODataOption.Filter, phrase));
         return this;
     }
@@ -49,14 +53,14 @@ export class FilterBuilder {
     andFilter = (predicate: (filter: FilterBuilder) => FilterBuilder) => {
         this.and(false);
         this.filters.push(
-            new QueryFragment(ODataOption.Filter, `(${predicate(new FilterBuilder()).toQuery()})`)
+            new QueryFragment(ODataOption.Filter, `(${predicate(new FilterBuilder(this.options)).toQuery()})`)
         );
         return this;
     };
     orFilter = (predicate: (filter: FilterBuilder) => FilterBuilder) => {
         this.or(false);
         this.filters.push(
-            new QueryFragment(ODataOption.Filter, `(${predicate(new FilterBuilder()).toQuery()})`)
+            new QueryFragment(ODataOption.Filter, `(${predicate(new FilterBuilder(this.options)).toQuery()})`)
         );
         return this;
     };

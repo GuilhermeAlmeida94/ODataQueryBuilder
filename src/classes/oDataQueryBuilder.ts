@@ -58,7 +58,7 @@ export class ODataQueryBuilder {
             this.filters.push('and');
 
         this.filters.push(
-            predicate(new FilterBuilder()).toQuery()
+            predicate(new FilterBuilder(this.options)).toQuery()
         );
         return this;
     };
