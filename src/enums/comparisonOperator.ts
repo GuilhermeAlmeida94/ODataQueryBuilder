@@ -1,8 +1,8 @@
 export enum ComparisonOperator {
-    Equals = <any>"eq",
+    Equal = <any>"eq",
     Less = <any>"lt",
     Greater = <any>"gt",
-    GreaterOrEqual = <any>"ge",
     LessOrEqual = <any>"le",
+    GreaterOrEqual = <any>"ge",
     NotEqual = <any>"ne"
 }

@@ -11,7 +11,7 @@ test('Value and String operator', () => {
 
     //Act
     oDataQueryBuilder
-        .filter(f => f.valueFilter('salary', ComparisonOperator.Equals, employee.salary).and()
+        .filter(f => f.valueFilter('salary', ComparisonOperator.Equal, employee.salary).and()
                         .stringFilter('name', StringOperator.Contains, employee.name));
         
     //Assert
@@ -25,7 +25,7 @@ test('Value null and String operator', () => {
 
     //Act
     oDataQueryBuilder
-        .filter(f => f.valueFilter('age', ComparisonOperator.Equals, employee.age).and()
+        .filter(f => f.valueFilter('age', ComparisonOperator.Equal, employee.age).and()
                         .stringFilter('name', StringOperator.Contains, employee.name));
         
     //Assert
@@ -40,7 +40,7 @@ test('Not ignoring value null and String operator', () => {
 
     //Act
     oDataQueryBuilder
-        .filter(f => f.valueFilter('age', ComparisonOperator.Equals, employee.age).and()
+        .filter(f => f.valueFilter('age', ComparisonOperator.Equal, employee.age).and()
                         .stringFilter('name', StringOperator.Contains, employee.name));
         
     //Assert

@@ -11,7 +11,7 @@ test('Value operator', () => {
 
     //Act
     oDataQueryBuilder
-        .filter(f => f.valueFilter('salary', ComparisonOperator.Equals, employee.salary));
+        .filter(f => f.valueFilter('salary', ComparisonOperator.Equal, employee.salary));
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
@@ -25,6 +25,19 @@ test('String operator', () => {
     //Act
     oDataQueryBuilder
         .filter(f => f.stringFilter('name', StringOperator.Contains, employee.name));
+        
+    //Assert
+    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+});
+
+test('Null value', () => {
+    //Arrange
+    const expectValue = ''
+    let oDataQueryBuilder = new ODataQueryBuilder();
+
+    //Act
+    oDataQueryBuilder
+        .filter(f => f.stringFilter('age', StringOperator.Contains, employee.age));
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);

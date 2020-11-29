@@ -9,7 +9,7 @@ and
 
 ## Operators
 There is two types of operators: comparison and string.
-Comparison operators are `equals`
+The comparison operators are `Equal`, `Less`, `Greater`, `LessOrEqual`,`GreaterOrEqual`,  `NotEqual`. The string operators are `Contains`, `StartsWith`, `EndsWith`.
 
 ## Examples
 Create the object tha will build your query
@@ -17,7 +17,7 @@ Create the object tha will build your query
 let oDataQueryBuilder = new ODataQueryBuilder();
 ```
 
-To filter using comparison operator, do something like this:
+You can filter using comparison operator.
 ```bash
 let query1 = oDataQueryBuilder
     .filter(f => f.valueFilter('salary', ComparisonOperator.Equals, 5000))
@@ -25,9 +25,56 @@ let query1 = oDataQueryBuilder
 ```
 The value of query1 will be `$filter=salary eq 5000`.
 
-To filter using string operators, do something like this:
+You can filter using string operators.
 ```bash
 let query2 = oDataQueryBuilder
     .filter(f => f.stringFilter('name', StringOperator.Contains, 'Will'));
 ```
 The value of query2 will be `$filter=name.contains('Will')`.
+
+If the value is null, by standart the filter will ignore the condition.
+```bash
+let query3 = oDataQueryBuilder
+        .filter(f => f.valueFilter('age', ComparisonOperator.Equal, null));
+```
+The value of query3 will be empty. If the null value must exist, define in the options on the constructor method like:
+```bash
+let builderOptions = {ignoreNull: false};
+let oDataQueryBuilderNotIgnoreNull = new ODataQueryBuilder(builderOptions);
+```
+Then, the same query will return `$filter=age eq null`.
+
+To add logical operators use the functions `and()` and `or()`.
+```bash
+let query4 = oDataQueryBuilder
+        .filter(f => f.valueFilter('salary', ComparisonOperator.Equal, 5000).and()
+                      .stringFilter('name', StringOperator.Contains, 'Will'));
+```
+The value of query4 will be `$filter=salary eq 5000 and name.contains('Will')`.
+
+If some value is null, the filter will ignore the condition.
+```bash
+let query4 = oDataQueryBuilder
+        .filter(f => f.valueFilter('age', ComparisonOperator.Equal, null).and()
+                        .stringFilter('name', StringOperator.Contains, 'Will));
+```
+The value of query4 will be `$filter=name.contains('Will')`.
+
+You can add a inner filter (that will generate filter with parentesis).
+```bash
+let query5 = oDataQueryBuilder
+        .filter(f => f.stringFilter('name', StringOperator.Contains, 'Will')
+                      .andFilter(f2 => f2.valueFilter('salary', ComparisonOperator.Greater, 5000).or()
+                                         .stringFilter('departament/name', StringOperator.StartsWith, 'Sales'))
+                        );
+```
+The value of query5 will be `$filter=name.contains('Will') and (salary gt 5000 or departament/name.startswith('Sales'))`.
+
+If the inner condition is null, both it and its logical operator will be ignored.
+```bash
+let query6 = oDataQueryBuilder
+        .filter(f => f.stringFilter('name', StringOperator.Contains, employee.name)
+                      .andFilter(f2 => f2.and().valueFilter('age', ComparisonOperator.Greater, employee.age).or())
+                        );
+```
+The value of query6 will be `$filter=name.contains('Will')`.
