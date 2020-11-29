@@ -1,6 +1,6 @@
 import { QueryFragment } from './queryFragment'
 import { ODataOption } from '../enums/oDataOption'
-import { ValueOperator } from '../enums/valueOperator';
+import { ComparisonOperator } from '../enums/comparisonOperator';
 import { StringOperator } from '../enums/stringOperator';
 import { BuilderOptions } from '../interfaces/builderOptions';
 
@@ -13,7 +13,7 @@ export class FilterBuilder {
     constructor(
         private options: BuilderOptions) {}
 
-    public valueFilter(field: string, operator: ValueOperator, value: filterExpressionType): this {
+    public valueFilter(field: string, operator: ComparisonOperator, value: filterExpressionType): this {
         if (!this.options.ignoreNull || value) {
             this.filters.push(
                 new QueryFragment(ODataOption.Filter, `${field} ${operator} ${this.getValue(value)}`)
