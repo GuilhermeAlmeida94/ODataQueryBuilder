@@ -13,8 +13,11 @@ export class ODataQueryBuilder {
     private doCount: boolean;
 
     constructor(
-        private options: BuilderOptions,
-        private extendedPropName?: string) {}
+        private options?: BuilderOptions,
+        private extendedPropName?: string) {
+            if (!this.options)
+                this.options = {ignoreNull: true};
+        }
 
     private static isGuid(value: string): boolean {
         value = value.toLowerCase();

@@ -1,0 +1,32 @@
+{
+  "name": "o-data-query-builder",
+  "version": "0.1.0",
+  "scripts": {},
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuiPhb/o-data-query-builder"
+  },
+  "bugs": {
+    "url": "https://github.com/GuiPhb/o-data-query-builder/issues"
+  },
+  "homepage": "https://github.com/GuiPhb/o-data-query-builder",
+  "contributors": [
+    {
+      "name": "Guilherme Almeida",
+      "url": "https://github.com/GuiPhb"
+    }
+  ],
+  "keywords": [
+    "odata",
+    "typescript"
+  ],
+  "peerDependencies": {},
+  "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.0.4",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1"
+  },
+  "dependencies": {}
+}
