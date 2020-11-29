@@ -3,7 +3,7 @@ module.exports = {
       "<rootDir>"
     ],
     "testMatch": [
-        "**/__tests__/**/*.ts?(x)", 
+        "**/tests/**/*.ts?(x)", 
         "**/?(*.)+(spec|test).ts?(x)" 
     ],
     "transform": {
