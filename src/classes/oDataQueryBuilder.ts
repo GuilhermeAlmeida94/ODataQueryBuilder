@@ -1,4 +1,3 @@
-
 import { OrderBy } from "../enums/orderByEnum";
 import { FilterBuilder } from './filterBuilder';
 import { BuilderOptions } from '../interfaces/builderOptions';
