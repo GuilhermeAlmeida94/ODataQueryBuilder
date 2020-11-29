@@ -4,7 +4,7 @@ import { ComparisonOperator } from "../src/enums/comparisonOperator";
 
 const employee = {name: 'Will', salary: 5000, age: null, departament: {name: 'Sales'}};
 
-test('String operator and internal condtestion (value or string operator)', () => {
+test('String operator and internal condition (value or string operator)', () => {
     //Arrange
     const expectValue = '$filter=name.contains(\'Will\') and (salary gt 5000 or departament/name.startswith(\'Sales\'))'
     let oDataQueryBuilder = new ODataQueryBuilder();
@@ -14,6 +14,37 @@ test('String operator and internal condtestion (value or string operator)', () =
         .filter(f => f.stringFilter('name', StringOperator.Contains, employee.name)
                         .andFilter(f2 => f2.valueFilter('salary', ComparisonOperator.Greater, employee.salary).or()
                                             .stringFilter('departament/name', StringOperator.StartsWith, employee.departament.name))
+                        );
+        
+    //Assert
+    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+});
+
+test('Removing unecessary \'and\' and not use \'or\' thanks to null value', () => {
+    //Arrange
+    const expectValue = '$filter=name.contains(\'Will\') and (departament/name.startswith(\'Sales\'))'
+    let oDataQueryBuilder = new ODataQueryBuilder();
+
+    //Act
+    oDataQueryBuilder
+        .filter(f => f.stringFilter('name', StringOperator.Contains, employee.name)
+                        .andFilter(f2 => f2.and().valueFilter('age', ComparisonOperator.Greater, employee.age).or()
+                                            .stringFilter('departament/name', StringOperator.StartsWith, employee.departament.name))
+                        );
+        
+    //Assert
+    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+});
+
+test('Removing unecessary \'and\' and not use \'or\' thanks to null value', () => {
+    //Arrange
+    const expectValue = '$filter=name.contains(\'Will\')'
+    let oDataQueryBuilder = new ODataQueryBuilder();
+
+    //Act
+    oDataQueryBuilder
+        .filter(f => f.stringFilter('name', StringOperator.Contains, employee.name)
+                        .andFilter(f2 => f2.and().valueFilter('age', ComparisonOperator.Greater, employee.age).or())
                         );
         
     //Assert

@@ -36,34 +36,38 @@ export class FilterBuilder {
         return this;
     }
 
-    private addLogic(phrase: string, checkLength: boolean): this {
+    private addLogicalOperator(phrase: string, checkLength: boolean): this {
         if (!checkLength || this.filters.length > 0)
             this.filters.push(new QueryFragment(ODataOption.Filter, phrase));
         return this;
     }
 
-    public and(checkLength = true): this {
-        return this.addLogic('and', checkLength);
+    public and(): this {
+        return this.addLogicalOperator('and', true);
     }
 
-    public or(checkLength = true): this {
-        return this.addLogic('or', checkLength);
+    public or(): this {
+        return this.addLogicalOperator('or', true);
     }
 
     andFilter = (predicate: (filter: FilterBuilder) => FilterBuilder) => {
-        this.and(false);
-        this.filters.push(
-            new QueryFragment(ODataOption.Filter, `(${predicate(new FilterBuilder(this.options)).toQuery()})`)
-        );
-        return this;
+        return this.logicalFilter('and', predicate);
     };
+
     orFilter = (predicate: (filter: FilterBuilder) => FilterBuilder) => {
-        this.or(false);
-        this.filters.push(
-            new QueryFragment(ODataOption.Filter, `(${predicate(new FilterBuilder(this.options)).toQuery()})`)
-        );
-        return this;
+        return this.logicalFilter('or', predicate);
     };
+
+    private logicalFilter(logical: string, predicate: (filter: FilterBuilder) => FilterBuilder) {
+        let innerFilter = predicate(new FilterBuilder(this.options)).toQuery()
+        
+        if (innerFilter){
+            this.addLogicalOperator(logical, false);
+            this.filters.push(new QueryFragment(ODataOption.Filter, `(${innerFilter})`));
+        }
+
+        return this;
+    }
 
     public toQuery(): string {
         if (!this.filters || this.filters.length < 1) return '';
