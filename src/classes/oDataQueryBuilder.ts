@@ -18,20 +18,19 @@ export class ODataQueryBuilder {
                 this.options = {ignoreNull: true};
         }
 
-    private static isGuid(value: string): boolean {
-        value = value.toLowerCase();
-
-        const regex = /[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}/i;
-        let match = regex.exec(value);
-
-        return match != null;
+    public orderBy(field: string): ODataQueryBuilder {
+        return this.orderByInternal(field, OrderBy.Asc)
     }
 
-    public orderBy(field: string, order: OrderBy): ODataQueryBuilder {
+    public orderByDesc(field: string): ODataQueryBuilder {
+        return this.orderByInternal(field, OrderBy.Desc)
+    }
+
+    private orderByInternal(field: string, order: OrderBy): ODataQueryBuilder {
         if (!field || field.length == 0)
             return this;
 
-        return this.orderByText(`${field} ${order}`)
+        return this.orderByText(`${field} ${order}`);
     }
 
     public orderByText(orderBy: string): ODataQueryBuilder {
@@ -40,7 +39,7 @@ export class ODataQueryBuilder {
         return this;
     }
 
-    public expand(propertyName: string, options?: BuilderOptions, func?: (query: ODataQueryBuilder) => void): ODataQueryBuilder {
+    public expand(propertyName: string, func?: (query: ODataQueryBuilder) => void, options?: BuilderOptions): ODataQueryBuilder {
         if (options)
             options = this.options;
 

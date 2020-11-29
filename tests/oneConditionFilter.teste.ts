@@ -4,9 +4,9 @@ import { ComparisonOperator } from "../src/enums/comparisonOperator";
 
 const employee = {name: 'Will', salary: 5000, age: null, departament: {name: 'Sales'}};
 
-test('Value operator', () => {
+test('Filter with value operator', () => {
     //Arrange
-    const expectValue = '$filter=salary eq 5000'
+    const expectValue = '$filter=salary eq 5000';
     let oDataQueryBuilder = new ODataQueryBuilder();
 
     //Act
@@ -17,9 +17,9 @@ test('Value operator', () => {
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
 });
 
-test('String operator', () => {
+test('Filter with string operator', () => {
     //Arrange
-    const expectValue = '$filter=name.contains(\'Will\')'
+    const expectValue = '$filter=name.contains(\'Will\')';
     let oDataQueryBuilder = new ODataQueryBuilder();
 
     //Act
@@ -30,9 +30,9 @@ test('String operator', () => {
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
 });
 
-test('Null value', () => {
+test('Filter with null value', () => {
     //Arrange
-    const expectValue = ''
+    const expectValue = '';
     let oDataQueryBuilder = new ODataQueryBuilder();
 
     //Act
