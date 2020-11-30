@@ -2,7 +2,7 @@
 A typescript library for build OData queries.
 
 ## Inspirations
-This library was made based in two others libraries: 
+This library was made based in the following libraries: 
 <a href="https://github.com/skynet2/ngx-odata">ngx-odata</a>
 ,
 <a href="https://github.com/jaredmahan/odata-query-builder">odata-query-builder</a>
