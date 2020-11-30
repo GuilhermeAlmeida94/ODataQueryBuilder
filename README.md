@@ -105,7 +105,7 @@ let query7 = oDataQueryBuilder
 ```
 The value of query7 will be `$filter=name.contains('Will')`.
 
-Above is how to use `select`, `skip`, `top`, `orderBy`, `orderByDesc`.
+The example below shows how to use `select`, `skip`, `top`, `orderBy`, `orderByDesc`.
 ```bash
 let query8 = oDataQueryBuilder
     .select(e => e.name, e => departament.name)
@@ -117,7 +117,7 @@ let query8 = oDataQueryBuilder
 ```
 The value of query8 will be `$top=5&$skip=1&$orderby=salary asc,age desc&$select=name,departament/name`.
 
-Above is how to use `count` associate with a `filter`.
+The example below shows how to use `count` associate with a `filter`.
 ```bash
 let query9 = oDataQueryBuilder
     .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, 'Will'))
@@ -126,7 +126,7 @@ let query9 = oDataQueryBuilder
 ```
 The value of query9 will be `$count=true&$filter=name.contains('Will')'`.
 
-Above is how to use `expand` associate with a `count`.
+The example below shows how to use `expand` associate with a `count`.
 ```bash
 let query10 = oDataQueryBuilder
     .expand(e => e.departament, dep => dep.count())
