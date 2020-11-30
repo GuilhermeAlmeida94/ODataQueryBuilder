@@ -1,5 +1,5 @@
 {
-  "name": "o-data-query-builder",
+  "name": "ODataQueryBuilder",
   "version": "0.1.0",
   "scripts": {
     "test": "jest"
@@ -7,12 +7,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GuiPhb/o-data-query-builder"
+    "url": "git+https://github.com/GuiPhb/ODataQueryBuilder"
   },
   "bugs": {
-    "url": "https://github.com/GuiPhb/o-data-query-builder/issues"
+    "url": "https://github.com/GuiPhb/ODataQueryBuilder/issues"
   },
-  "homepage": "https://github.com/GuiPhb/o-data-query-builder",
+  "homepage": "https://github.com/GuiPhb/ODataQueryBuilder",
   "contributors": [
     {
       "name": "Guilherme Almeida",

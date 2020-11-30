@@ -1,4 +1,4 @@
-# o-data-query-builder
+# ODataQueryBuilder
 A typescript library for build OData queries.
 
 ## Inspirations
