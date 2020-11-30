@@ -17,8 +17,18 @@ export class ODataQueryBuilder<T> {
         private extendedPropName?: string) {
             if (!this.options)
                 this.options = {ignoreNull: true};
-        }
+    }
 
+    public clear() {
+        this.selects = [];
+        this.filters = [];
+        this.orderBys = [];
+        this.expands = [];
+        this.skipValue = null;
+        this.topValue = null;
+        this.doCount = null;
+    }
+    
     public orderBy(field: PropertyType<T>): ODataQueryBuilder<T> {
         return this.orderByInternal(field, OrderBy.Asc)
     }
@@ -125,29 +135,29 @@ export class ODataQueryBuilder<T> {
     public generate(): string {
         let isExpand = this.extendedPropName != null && this.extendedPropName.length > 0;
 
-        let resultStr = "";
+        let query = "";
         let delimiter = isExpand ? ';' : '&';
 
         if (this.topValue != 0) {
-            resultStr = ODataQueryBuilder.checkAndAppend(resultStr, '$top', delimiter, this.topValue);
+            query = ODataQueryBuilder.checkAndAppend(query, '$top', delimiter, this.topValue);
         }
 
         if (this.skipValue != 0) {
-            resultStr = ODataQueryBuilder.checkAndAppend(resultStr, '$skip', delimiter, this.skipValue);
+            query = ODataQueryBuilder.checkAndAppend(query, '$skip', delimiter, this.skipValue);
         }
 
-        resultStr = ODataQueryBuilder.checkAndAppend(resultStr, '$count', delimiter, this.doCount);
+        query = ODataQueryBuilder.checkAndAppend(query, '$count', delimiter, this.doCount);
 
         if (this.filters.length > 0) {
-            resultStr = ODataQueryBuilder.checkAndAppend(resultStr, '$filter', delimiter, this.filters.join(` and `))
+            query = ODataQueryBuilder.checkAndAppend(query, '$filter', delimiter, this.filters.join(` and `))
         }
 
         if (this.orderBys.length > 0) {
-            resultStr = ODataQueryBuilder.checkAndAppend(resultStr, '$orderby', delimiter, this.orderBys.join(','));
+            query = ODataQueryBuilder.checkAndAppend(query, '$orderby', delimiter, this.orderBys.join(','));
         }
 
         if (this.selects.length > 0) {
-            resultStr = ODataQueryBuilder.checkAndAppend(resultStr, '$select', delimiter, this.selects.join(','))
+            query = ODataQueryBuilder.checkAndAppend(query, '$select', delimiter, this.selects.join(','))
         }
 
         if (this.expands.length > 0) {
@@ -159,16 +169,16 @@ export class ODataQueryBuilder<T> {
             }
 
             if (result.length > 0) {
-                resultStr = ODataQueryBuilder.checkAndAppend(resultStr, '$expand', delimiter, result.join(','));
+                query = ODataQueryBuilder.checkAndAppend(query, '$expand', delimiter, result.join(','));
             }
         }
 
-        if (resultStr.length > 0 && isExpand)
-            resultStr = `(${resultStr})`;
+        if (query.length > 0 && isExpand)
+            query = `(${query})`;
 
         if (isExpand)
-            resultStr = `${this.extendedPropName}${resultStr}`;
+            query = `${this.extendedPropName}${query}`;
 
-        return resultStr;
+        return query;
     }
 }

@@ -91,7 +91,7 @@ You can add a inner filter (that will generate filter with parentesis).
 let query6 = oDataQueryBuilder
     .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, 'Will')
                   .andFilter(f2 => f2.valueFilter(e => e.salary, ComparisonOperator.Greater, 5000).or()
-                                     .stringFilter(e => departament.name, StringOperator.StartsWith, 'Sales')))
+                                     .stringFilter(e => e.departament.name, StringOperator.StartsWith, 'Sales')))
     .generate();
 ```
 The value of query6 will be `$filter=name.contains('Will') and (salary gt 5000 or departament/name.startswith('Sales'))`.

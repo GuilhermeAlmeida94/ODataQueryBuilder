@@ -3,14 +3,15 @@ import { StringOperator } from "../src/enums/stringOperator";
 import { ComparisonOperator } from "../src/enums/comparisonOperator";
 import { Employee } from "./employee";
 
-const employee = {name: 'Will', salary: 5000, age: null, departament: {name: 'Sales'}};
+const employee: Employee = {name: 'Will', salary: 5000, age: null, departament: {name: 'Sales'}};
+let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
 test('Filter with value operator', () => {
     //Arrange
     const expectValue = '$filter=salary eq 5000';
-    let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
     //Act
+    oDataQueryBuilder.clear();
     oDataQueryBuilder
         .filter(f => f.valueFilter(e => e.salary, ComparisonOperator.Equal, employee.salary));
         
@@ -21,9 +22,9 @@ test('Filter with value operator', () => {
 test('Filter with string operator', () => {
     //Arrange
     const expectValue = '$filter=name.contains(\'Will\')';
-    let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
     //Act
+    oDataQueryBuilder.clear();
     oDataQueryBuilder
         .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, employee.name));
         
@@ -34,11 +35,11 @@ test('Filter with string operator', () => {
 test('Filter with null value', () => {
     //Arrange
     const expectValue = '';
-    let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
     //Act
+    oDataQueryBuilder.clear();
     oDataQueryBuilder
-        .filter(f => f.stringFilter(e => e.age, StringOperator.Contains, employee.age));
+        .filter(f => f.valueFilter(e => e.age, ComparisonOperator.Equal, employee.age));
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
