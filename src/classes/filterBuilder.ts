@@ -16,6 +16,8 @@ export class FilterBuilder<T> {
         if (!this.options.ignoreNull || value) {
             this.filters.push(`${PropertyClass.getPropertyName(field)} ${operator} ${this.getValue(value)}`);
         }
+        this.verifyLastElement(value);
+
         return this;
     }
 
@@ -23,7 +25,18 @@ export class FilterBuilder<T> {
         if (!this.options.ignoreNull || value) {
             this.filters.push(`${operator}(${PropertyClass.getPropertyName(field)}, '${value}')`);
         }
+        this.verifyLastElement(value);
+
         return this;
+    }
+
+    private verifyLastElement(value: any): void {
+        if (this.options.ignoreNull && !value) {
+            let lastElement = this.filters.pop();
+            if (lastElement !== undefined && lastElement !== 'and' && lastElement !== 'or') {
+                this.filters.push(lastElement);
+            }
+        }
     }
 
     public freeFilter(text: string): this {

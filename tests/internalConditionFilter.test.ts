@@ -3,7 +3,7 @@ import { StringOperator } from "../src/enums/stringOperator";
 import { ComparisonOperator } from "../src/enums/comparisonOperator";
 import { Employee } from "./employee";
 
-const employee: Employee = {name: 'Will', salary: 5000, age: null, departament: {name: 'Sales'}};
+const employee: Employee = {name: 'Will', salary: 5000, age: null, motherName: null, fatherName: null, departament: {name: 'Sales'}};
 let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
 test('Filter with string operator and internal condition (value or string operator)', () => {
@@ -22,7 +22,7 @@ test('Filter with string operator and internal condition (value or string operat
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
 });
 
-test('Removing unecessary \'and\' and not use \'or\' thanks to null value from filter', () => {
+test('Removing unecessary \'and\' and not use \'or\' thanks to null value from filter 1', () => {
     //Arrange
     const expectValue = '$filter=contains(name, \'Will\') and (startswith(departament/name, \'Sales\'))';
 
@@ -38,7 +38,7 @@ test('Removing unecessary \'and\' and not use \'or\' thanks to null value from f
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
 });
 
-test('Removing unecessary \'and\' and not use \'or\' thanks to null value from filter', () => {
+test('Removing unecessary \'and\' and not use \'or\' thanks to null value from filter 2', () => {
     //Arrange
     const expectValue = '$filter=contains(name, \'Will\')';
 

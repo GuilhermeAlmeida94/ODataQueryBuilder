@@ -1,6 +1,5 @@
 import { ODataQueryBuilder } from "../src/classes/oDataQueryBuilder";
 import { StringOperator } from "../src/enums/stringOperator";
-import { OrderBy } from "../src/enums/orderByEnum";
 import { Employee } from "./employee";
 
 test('Select, top and multiple order by', () => {

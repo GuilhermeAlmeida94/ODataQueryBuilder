@@ -3,7 +3,7 @@ import { StringOperator } from "../src/enums/stringOperator";
 import { ComparisonOperator } from "../src/enums/comparisonOperator";
 import { Employee } from "./employee";
 
-const employee: Employee = {name: 'Will', salary: 5000, age: null, departament: {name: 'Sales'}};
+const employee: Employee = {name: 'Will', salary: 5000, age: null, motherName: null, fatherName: null, departament: {name: 'Sales'}};
 let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
 test('Filter with value and String operator', () => {
@@ -14,7 +14,7 @@ test('Filter with value and String operator', () => {
     oDataQueryBuilder.clear();
     oDataQueryBuilder
         .filter(f => f.valueFilter(e => e.salary, ComparisonOperator.Equal, employee.salary).and()
-                        .stringFilter(e => e.name, StringOperator.Contains, employee.name));
+                      .stringFilter(e => e.name, StringOperator.Contains, employee.name));
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
@@ -28,7 +28,7 @@ test('Filter with value null and String operator', () => {
     oDataQueryBuilder.clear();
     oDataQueryBuilder
         .filter(f => f.valueFilter(e => e.age, ComparisonOperator.Equal, employee.age).and()
-                        .stringFilter(e => e.name, StringOperator.Contains, employee.name));
+                      .stringFilter(e => e.name, StringOperator.Contains, employee.name));
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
@@ -43,7 +43,23 @@ test('Filter with not ignoring value null and String operator', () => {
     //Act
     oDataQueryBuilder2
         .filter(f => f.valueFilter(e => e.age, ComparisonOperator.Equal, employee.age).and()
-                        .stringFilter(e => e.name, StringOperator.Contains, employee.name));
+                      .stringFilter(e => e.name, StringOperator.Contains, employee.name));
+        
+    //Assert
+    expect(oDataQueryBuilder2.generate()).toEqual(expectValue);
+});
+
+test('Filter with multiple conditions', () => {
+    //Arrange
+    const expectValue = '$filter=contains(name, \'Will\')';
+    let oDataQueryBuilder2 = new ODataQueryBuilder<Employee>();
+
+    //Act
+    oDataQueryBuilder2
+        .filter(f => f.valueFilter(e => e.age, ComparisonOperator.Equal, employee.age).and()
+                      .stringFilter(e => e.name, StringOperator.Contains, employee.name).or()
+                      .stringFilter(e => e.motherName, StringOperator.Contains, employee.motherName).and()
+                      .stringFilter(e => e.fatherName, StringOperator.Contains, employee.fatherName));
         
     //Assert
     expect(oDataQueryBuilder2.generate()).toEqual(expectValue);

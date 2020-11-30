@@ -3,7 +3,7 @@ import { StringOperator } from "../src/enums/stringOperator";
 import { ComparisonOperator } from "../src/enums/comparisonOperator";
 import { Employee } from "./employee";
 
-const employee: Employee = {name: 'Will', salary: 5000, age: null, departament: {name: 'Sales'}};
+const employee: Employee = {name: 'Will', salary: 5000, age: null, motherName: null, fatherName: null, departament: {name: 'Sales'}};
 let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
 test('Filter with value operator', () => {
