@@ -84,7 +84,7 @@ let query5 = oDataQueryBuilder
                     .stringFilter(e => e.name, StringOperator.Contains, 'Will'))
     .generate();
 ```
-The value of query5 will be `$filter=name.contains('Will')`.
+The value of query5 will be `$filter=contains(name, 'Will')`.
 
 You can add a inner filter (that will generate filter with parentesis).
 ```bash
@@ -94,7 +94,7 @@ let query6 = oDataQueryBuilder
                                      .stringFilter(e => e.departament.name, StringOperator.StartsWith, 'Sales')))
     .generate();
 ```
-The value of query6 will be `$filter=name.contains('Will') and (salary gt 5000 or departament/name.startswith('Sales'))`.
+The value of query6 will be `$filter=contains(name, 'Will') and (salary gt 5000 or startswith(departament/name, 'Sales'))`.
 
 If the inner condition is null, both it and its logical operator will be ignored.
 ```bash
@@ -103,7 +103,7 @@ let query7 = oDataQueryBuilder
                       .andFilter(f2 => f2.and().valueFilter('age', ComparisonOperator.Greater, null).or()))
     .generate();
 ```
-The value of query7 will be `$filter=name.contains('Will')`.
+The value of query7 will be `$filter=contains(name, 'Will')`.
 
 The example below shows how to use `select`, `skip`, `top`, `orderBy`, `orderByDesc`.
 ```bash
@@ -124,7 +124,7 @@ let query9 = oDataQueryBuilder
     .count()
     .generate();
 ```
-The value of query9 will be `$count=true&$filter=name.contains('Will')'`.
+The value of query9 will be `$count=true&$filter=contains(name, 'Will')'`.
 
 The example below shows how to use `expand` associate with a `count`.
 ```bash

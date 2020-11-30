@@ -21,7 +21,7 @@ test('Select, top and multiple order by', () => {
 
 test('Simple filter and count', () => {
     //Arrange
-    const expectValue = '$count=true&$filter=name.contains(\'Will\')';
+    const expectValue = '$count=true&$filter=contains(name, \'Will\')';
     let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
     //Act

@@ -21,7 +21,7 @@ export class FilterBuilder<T> {
 
     public stringFilter(field: PropertyType<T>, operator: StringOperator, value: string): this {
         if (!this.options.ignoreNull || value) {
-            this.filters.push(`${PropertyClass.getPropertyName(field)}.${operator}('${value}')`);
+            this.filters.push(`${operator}(${PropertyClass.getPropertyName(field)}, '${value}')`);
         }
         return this;
     }

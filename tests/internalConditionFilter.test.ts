@@ -8,7 +8,7 @@ let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
 test('Filter with string operator and internal condition (value or string operator)', () => {
     //Arrange
-    const expectValue = '$filter=name.contains(\'Will\') and (salary gt 5000 or departament/name.startswith(\'Sales\'))';
+    const expectValue = '$filter=contains(name, \'Will\') and (salary gt 5000 or startswith(departament/name, \'Sales\'))';
 
     //Act
     oDataQueryBuilder.clear();
@@ -24,7 +24,7 @@ test('Filter with string operator and internal condition (value or string operat
 
 test('Removing unecessary \'and\' and not use \'or\' thanks to null value from filter', () => {
     //Arrange
-    const expectValue = '$filter=name.contains(\'Will\') and (departament/name.startswith(\'Sales\'))';
+    const expectValue = '$filter=contains(name, \'Will\') and (startswith(departament/name, \'Sales\'))';
 
     //Act
     oDataQueryBuilder.clear();
@@ -40,7 +40,7 @@ test('Removing unecessary \'and\' and not use \'or\' thanks to null value from f
 
 test('Removing unecessary \'and\' and not use \'or\' thanks to null value from filter', () => {
     //Arrange
-    const expectValue = '$filter=name.contains(\'Will\')';
+    const expectValue = '$filter=contains(name, \'Will\')';
 
     //Act
     oDataQueryBuilder.clear();

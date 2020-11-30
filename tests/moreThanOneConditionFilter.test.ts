@@ -8,7 +8,7 @@ let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
 test('Filter with value and String operator', () => {
     //Arrange
-    const expectValue = '$filter=salary eq 5000 and name.contains(\'Will\')';
+    const expectValue = '$filter=salary eq 5000 and contains(name, \'Will\')';
 
     //Act
     oDataQueryBuilder.clear();
@@ -22,7 +22,7 @@ test('Filter with value and String operator', () => {
 
 test('Filter with value null and String operator', () => {
     //Arrange
-    const expectValue = '$filter=name.contains(\'Will\')';
+    const expectValue = '$filter=contains(name, \'Will\')';
 
     //Act
     oDataQueryBuilder.clear();
@@ -36,7 +36,7 @@ test('Filter with value null and String operator', () => {
 
 test('Filter with not ignoring value null and String operator', () => {
     //Arrange
-    const expectValue = '$filter=age eq null and name.contains(\'Will\')';
+    const expectValue = '$filter=age eq null and contains(name, \'Will\')';
     let builderOptions = {ignoreNull: false};
     let oDataQueryBuilder2 = new ODataQueryBuilder<Employee>(builderOptions);
 

@@ -21,7 +21,7 @@ test('Filter with value operator', () => {
 
 test('Filter with string operator', () => {
     //Arrange
-    const expectValue = '$filter=name.contains(\'Will\')';
+    const expectValue = '$filter=contains(name, \'Will\')';
 
     //Act
     oDataQueryBuilder.clear();
