@@ -53,7 +53,7 @@ let query2 = oDataQueryBuilder
     .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, 'Will'))
     .generate();
 ```
-The value of query2 will be `$filter=name.contains('Will')`.
+The value of query2 will be `$filter=contains(name, 'Will')`.
 
 If the value is null, by standart the filter will ignore the condition.
 ```bash
@@ -75,7 +75,7 @@ let query4 = oDataQueryBuilder
                     .stringFilter(e => e.name, StringOperator.Contains, 'Will'))
     .generate();
 ```
-The value of query4 will be `$filter=salary eq 5000 and name.contains('Will')`.
+The value of query4 will be `$filter=salary eq 5000 and contains(name, 'Will')`.
 
 If some value is null, the filter will ignore the condition.
 ```bash
