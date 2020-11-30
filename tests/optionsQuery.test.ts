@@ -1,18 +1,19 @@
 import { ODataQueryBuilder } from "../src/classes/oDataQueryBuilder";
 import { StringOperator } from "../src/enums/stringOperator";
 import { OrderBy } from "../src/enums/orderByEnum";
+import { Employee } from "./employee";
 
 test('Select, top and multiple order by', () => {
     //Arrange
     const expectValue = '$top=5&$skip=1&$orderby=salary asc,age desc&$select=name,departament/name';
-    let oDataQueryBuilder = new ODataQueryBuilder();
+    let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
     //Act
-    oDataQueryBuilder.select('name', 'departament/name')
+    oDataQueryBuilder.select(e => e.name, e => e.departament.name)
                      .skip(1)
                      .top(5)
-                     .orderBy('salary')
-                     .orderByDesc('age');
+                     .orderBy(e => e.salary)
+                     .orderByDesc(e => e.age);
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
@@ -21,10 +22,10 @@ test('Select, top and multiple order by', () => {
 test('Simple filter and count', () => {
     //Arrange
     const expectValue = '$count=true&$filter=name.contains(\'Will\')';
-    let oDataQueryBuilder = new ODataQueryBuilder();
+    let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
     //Act
-    oDataQueryBuilder.filter(f => f.stringFilter('name', StringOperator.Contains, 'Will'))
+    oDataQueryBuilder.filter(f => f.stringFilter(e => e.name, StringOperator.Contains, 'Will'))
                      .count();
         
     //Assert
@@ -34,10 +35,10 @@ test('Simple filter and count', () => {
 test('Expand', () => {
     //Arrange
     const expectValue = '$expand=departament($count=true)';
-    let oDataQueryBuilder = new ODataQueryBuilder();
+    let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
     //Act
-    oDataQueryBuilder.expand('departament', e => e.count());
+    oDataQueryBuilder.expand(e => e.departament, dep => dep.count());
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);

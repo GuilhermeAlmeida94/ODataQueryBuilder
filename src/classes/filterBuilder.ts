@@ -1,44 +1,39 @@
-import { QueryFragment } from './queryFragment'
-import { ODataOption } from '../enums/oDataOption'
 import { ComparisonOperator } from '../enums/comparisonOperator';
 import { StringOperator } from '../enums/stringOperator';
 import { BuilderOptions } from '../interfaces/builderOptions';
+import { PropertyClass, PropertyType } from './propertyClass';
 
 type filterExpressionType = string | number | boolean | Date;
 
-export class FilterBuilder {
+export class FilterBuilder<T> {
     
-    private filters: QueryFragment[] = [];
+    private filters: string[] = [];
 
     constructor(
         private options: BuilderOptions) {}
 
-    public valueFilter(field: string, operator: ComparisonOperator, value: filterExpressionType): this {
+    public valueFilter(field: PropertyType<T>, operator: ComparisonOperator, value: filterExpressionType): this {
         if (!this.options.ignoreNull || value) {
-            this.filters.push(
-                new QueryFragment(ODataOption.Filter, `${field} ${operator} ${this.getValue(value)}`)
-            );
+            this.filters.push(`${PropertyClass.getPropertyName(field)} ${operator} ${this.getValue(value)}`);
         }
         return this;
     }
 
-    public stringFilter(field: string, operator: StringOperator, value: string): this {
+    public stringFilter(field: PropertyType<T>, operator: StringOperator, value: string): this {
         if (!this.options.ignoreNull || value) {
-            this.filters.push(
-                new QueryFragment(ODataOption.Filter, `${field}.${operator}('${value}')`)
-            );
+            this.filters.push(`${PropertyClass.getPropertyName(field)}.${operator}('${value}')`);
         }
         return this;
     }
 
     public freeFilter(text: string): this {
-        this.filters.push(new QueryFragment(ODataOption.Filter, text));
+        this.filters.push(text);
         return this;
     }
 
-    private addLogicalOperator(phrase: string, checkLength: boolean): this {
+    private addLogicalOperator(logical: string, checkLength: boolean): this {
         if (!checkLength || this.filters.length > 0)
-            this.filters.push(new QueryFragment(ODataOption.Filter, phrase));
+            this.filters.push(logical);
         return this;
     }
 
@@ -50,20 +45,20 @@ export class FilterBuilder {
         return this.addLogicalOperator('or', true);
     }
 
-    andFilter = (predicate: (filter: FilterBuilder) => FilterBuilder) => {
+    andFilter = (predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) => {
         return this.logicalFilter('and', predicate);
     };
 
-    orFilter = (predicate: (filter: FilterBuilder) => FilterBuilder) => {
+    orFilter = (predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) => {
         return this.logicalFilter('or', predicate);
     };
 
-    private logicalFilter(logical: string, predicate: (filter: FilterBuilder) => FilterBuilder) {
+    private logicalFilter(logical: string, predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) {
         let innerFilter = predicate(new FilterBuilder(this.options)).toQuery()
         
         if (innerFilter){
             this.addLogicalOperator(logical, false);
-            this.filters.push(new QueryFragment(ODataOption.Filter, `(${innerFilter})`));
+            this.filters.push(`(${innerFilter})`);
         }
 
         return this;
@@ -71,7 +66,7 @@ export class FilterBuilder {
 
     public toQuery(): string {
         if (!this.filters || this.filters.length < 1) return '';
-        return this.filters.map(f => f.value).join(' ');
+        return this.filters.map(f => f).join(' ');
     }
 
     private getValue(value: filterExpressionType): string {
