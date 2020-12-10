@@ -5,6 +5,7 @@ export class Employee {
     motherName: string;
     fatherName: string;
     departament: Departament;
+    certificates: string[];
 }
 
 export class Departament {

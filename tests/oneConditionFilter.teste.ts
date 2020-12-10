@@ -2,19 +2,9 @@ import { ODataQueryBuilder } from "../src/classes/oDataQueryBuilder";
 import { StringOperator } from "../src/enums/stringOperator";
 import { ComparisonOperator } from "../src/enums/comparisonOperator";
 import { Employee } from "./employee";
+import { EmployeeData } from "./employee-data";
 
-const employee: Employee = 
-{
-    name: 'Will',
-    salary: 5000,
-    age: null,
-    motherName: null,
-    fatherName: null,
-    departament:
-    {
-        name: 'Sales'
-    }
-};
+const employee = new EmployeeData().employee;
 let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
 test('Filter with value operator', () => {
