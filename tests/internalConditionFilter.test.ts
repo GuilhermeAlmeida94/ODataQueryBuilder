@@ -3,7 +3,18 @@ import { StringOperator } from "../src/enums/stringOperator";
 import { ComparisonOperator } from "../src/enums/comparisonOperator";
 import { Employee } from "./employee";
 
-const employee: Employee = {name: 'Will', salary: 5000, age: null, motherName: null, fatherName: null, departament: {name: 'Sales'}};
+const employee: Employee = 
+{
+    name: 'Will',
+    salary: 5000,
+    age: null,
+    motherName: null,
+    fatherName: null,
+    departament:
+    {
+        name: 'Sales'
+    }
+};
 let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
 
 test('Filter with string operator and internal condition (value or string operator)', () => {
@@ -48,6 +59,24 @@ test('Removing unecessary \'and\' and not use \'or\' thanks to null value from f
         .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, employee.name)
                         .andFilter(f2 => f2.and().valueFilter(e => e.age, ComparisonOperator.Greater, employee.age).or())
                         );
+        
+    //Assert
+    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+});
+
+test('Filter with null condition and internal filter', () => {
+    //Arrange
+    const expectValue = '$filter=(salary eq 5000)';
+
+    //Act
+    oDataQueryBuilder.clear();
+    oDataQueryBuilder
+        .filter(f => f
+                .valueFilter(e => e.age, ComparisonOperator.Equal, employee.age)
+                .andFilter(f2 => f2
+                    .valueFilter(e => e.salary, ComparisonOperator.Equal, employee.salary)
+            )
+        );
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);

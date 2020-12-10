@@ -32,30 +32,35 @@ export class FilterBuilder<T> {
 
     private verifyLastElement(value: any): void {
         if (this.options.ignoreNull && !value) {
-            let lastElement = this.filters.pop();
-            if (lastElement !== undefined && lastElement !== 'and' && lastElement !== 'or') {
+            const lastElement = this.filters.pop();
+            if (lastElement !== undefined &&
+                lastElement !== 'and' &&
+                lastElement !== 'or') {
                 this.filters.push(lastElement);
             }
         }
     }
 
     public freeFilter(text: string): this {
-        this.filters.push(text);
+        if (!this.options.ignoreNull || text) {
+            this.filters.push(text);
+        }
+        this.verifyLastElement(text);
         return this;
     }
 
-    private addLogicalOperator(logical: string, checkLength: boolean): this {
-        if (!checkLength || this.filters.length > 0)
+    private addLogicalOperator(logical: string): this {
+        if (this.filters.length > 0)
             this.filters.push(logical);
         return this;
     }
 
     public and(): this {
-        return this.addLogicalOperator('and', true);
+        return this.addLogicalOperator('and');
     }
 
     public or(): this {
-        return this.addLogicalOperator('or', true);
+        return this.addLogicalOperator('or');
     }
 
     andFilter = (predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) => {
@@ -70,7 +75,7 @@ export class FilterBuilder<T> {
         let innerFilter = predicate(new FilterBuilder(this.options)).toQuery()
         
         if (innerFilter){
-            this.addLogicalOperator(logical, false);
+            this.addLogicalOperator(logical);
             this.filters.push(`(${innerFilter})`);
         }
 
