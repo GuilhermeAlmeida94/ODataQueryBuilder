@@ -27,7 +27,7 @@ test('Filter with string operator', () => {
     //Act
     oDataQueryBuilder.clear();
     oDataQueryBuilder
-        .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, employee.name));
+        .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, employee.name).or());
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
@@ -41,6 +41,32 @@ test('Filter with null value', () => {
     oDataQueryBuilder.clear();
     oDataQueryBuilder
         .filter(f => f.valueFilter(e => e.age, ComparisonOperator.Equal, employee.age));
+        
+    //Assert
+    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+});
+
+test('Filter with array value', () => {
+    //Arrange
+    const expectValue = '$filter=(salary eq 4000 or salary eq 3000)';
+
+    //Act
+    oDataQueryBuilder.clear();
+    oDataQueryBuilder
+        .filter(f => f.valueFilter(e => e.salary, ComparisonOperator.Equal, [4000, 3000]));
+        
+    //Assert
+    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+});
+
+test('Filter with array string', () => {
+    //Arrange
+    const expectValue = '$filter=(contains(name, \'Will\') or contains(name, \'Sam\'))';
+
+    //Act
+    oDataQueryBuilder.clear();
+    oDataQueryBuilder
+        .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, ['Will', 'Sam']));
         
     //Assert
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);

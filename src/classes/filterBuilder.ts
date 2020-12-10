@@ -3,7 +3,7 @@ import { StringOperator } from '../enums/stringOperator';
 import { BuilderOptions } from '../interfaces/builderOptions';
 import { PropertyClass, PropertyType } from './propertyClass';
 
-type filterExpressionType = string | number | boolean | Date;
+type valueFilterType = string | number | boolean | Date | Array<valueFilterType>;
 
 export class FilterBuilder<T> {
     
@@ -12,40 +12,56 @@ export class FilterBuilder<T> {
     constructor(
         private options: BuilderOptions) {}
 
-    public valueFilter(field: PropertyType<T>, operator: ComparisonOperator, value: filterExpressionType): this {
+    public valueFilter(field: PropertyType<T>, operator: ComparisonOperator, value: valueFilterType): this {
         if (!this.options.ignoreNull || value) {
-            this.filters.push(`${PropertyClass.getPropertyName(field)} ${operator} ${this.getValue(value)}`);
+            if (!Array.isArray(value)) {
+                this.filters.push(`${PropertyClass.getPropertyName(field)} ${operator} ${this.getValue(value)}`);
+            }
+            else {
+                const innerFilter = new FilterBuilder<T>(this.options);
+                for (let item of value) {
+                    innerFilter.valueFilter(field, operator, item).or();
+                }
+                this.filters.push(`(${innerFilter.generate()})`);
+            }
         }
-        this.verifyLastElement(value);
+        this.verifyLastElement();
 
         return this;
     }
 
-    public stringFilter(field: PropertyType<T>, operator: StringOperator, value: string): this {
+    public stringFilter(field: PropertyType<T>, operator: StringOperator, value: string | Array<string>): this {
         if (!this.options.ignoreNull || value) {
-            this.filters.push(`${operator}(${PropertyClass.getPropertyName(field)}, '${value}')`);
+            if (!Array.isArray(value)) {
+                this.filters.push(`${operator}(${PropertyClass.getPropertyName(field)}, '${value}')`);
+            }
+            else {
+                const innerFilter = new FilterBuilder<T>(this.options);
+                for (let item of value) {
+                    innerFilter.stringFilter(field, operator, item).or();
+                }
+                this.filters.push(`(${innerFilter.generate()})`);
+            }
         }
-        this.verifyLastElement(value);
+        this.verifyLastElement();
 
         return this;
     }
 
-    private verifyLastElement(value: any): void {
-        if (this.options.ignoreNull && !value) {
+    private verifyLastElement(): void {
             const lastElement = this.filters.pop();
             if (lastElement !== undefined &&
                 lastElement !== 'and' &&
                 lastElement !== 'or') {
                 this.filters.push(lastElement);
             }
-        }
     }
 
     public freeFilter(text: string): this {
         if (!this.options.ignoreNull || text) {
             this.filters.push(text);
         }
-        this.verifyLastElement(text);
+        this.verifyLastElement();
         return this;
     }
 
@@ -72,7 +88,7 @@ export class FilterBuilder<T> {
     };
 
     private logicalFilter(logical: string, predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) {
-        let innerFilter = predicate(new FilterBuilder(this.options)).toQuery()
+        let innerFilter = predicate(new FilterBuilder(this.options)).generate()
         
         if (innerFilter){
             this.addLogicalOperator(logical);
@@ -82,12 +98,7 @@ export class FilterBuilder<T> {
         return this;
     }
 
-    public toQuery(): string {
-        if (!this.filters || this.filters.length < 1) return '';
-        return this.filters.map(f => f).join(' ');
-    }
-
-    private getValue(value: filterExpressionType): string {
+    private getValue(value: valueFilterType): string {
         let type: string = typeof value;
         if (value instanceof Date) type = 'date';
 
@@ -99,5 +110,11 @@ export class FilterBuilder<T> {
         default:
             return `${value}`;
         }
+    }
+
+    public generate(): string {
+        if (!this.filters || this.filters.length < 1) return '';
+        this.verifyLastElement();
+        return this.filters.map(f => f).join(' ');
     }
 }

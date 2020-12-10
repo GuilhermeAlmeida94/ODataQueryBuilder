@@ -70,7 +70,7 @@ export class ODataQueryBuilder<T> {
             this.filters.push('and');
 
         this.filters.push(
-            predicate(new FilterBuilder(this.options)).toQuery()
+            predicate(new FilterBuilder(this.options)).generate()
         );
         return this;
     };
