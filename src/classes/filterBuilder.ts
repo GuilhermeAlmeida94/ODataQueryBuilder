@@ -6,7 +6,7 @@ import { PropertyClass, PropertyType } from './propertyClass';
 type valueFilterType = string | number | boolean | Date | Array<valueFilterType>;
 
 export class FilterBuilder<T> {
-    
+
     private filters: string[] = [];
 
     constructor(
@@ -19,7 +19,7 @@ export class FilterBuilder<T> {
             }
             else {
                 const innerFilter = new FilterBuilder<T>(this.options);
-                for (let item of value) {
+                for (const item of value) {
                     innerFilter.valueFilter(field, operator, item).or();
                 }
                 this.filters.push(`(${innerFilter.generate()})`);
@@ -37,7 +37,7 @@ export class FilterBuilder<T> {
             }
             else {
                 const innerFilter = new FilterBuilder<T>(this.options);
-                for (let item of value) {
+                for (const item of value) {
                     innerFilter.stringFilter(field, operator, item).or();
                 }
                 this.filters.push(`(${innerFilter.generate()})`);
@@ -66,8 +66,9 @@ export class FilterBuilder<T> {
     }
 
     private addLogicalOperator(logical: string): this {
-        if (this.filters.length > 0)
+        if (this.filters.length > 0) {
             this.filters.push(logical);
+        }
         return this;
     }
 
@@ -79,17 +80,17 @@ export class FilterBuilder<T> {
         return this.addLogicalOperator('or');
     }
 
-    andFilter = (predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) => {
+    public andFilter = (predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) => {
         return this.logicalFilter('and', predicate);
-    };
+    }
 
-    orFilter = (predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) => {
+    public orFilter = (predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) => {
         return this.logicalFilter('or', predicate);
-    };
+    }
 
-    private logicalFilter(logical: string, predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) {
-        let innerFilter = predicate(new FilterBuilder(this.options)).generate()
-        
+    private logicalFilter(logical: string, predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>): this {
+        const innerFilter = predicate(new FilterBuilder(this.options)).generate();
+
         if (innerFilter){
             this.addLogicalOperator(logical);
             this.filters.push(`(${innerFilter})`);
@@ -100,7 +101,7 @@ export class FilterBuilder<T> {
 
     private getValue(value: valueFilterType): string {
         let type: string = typeof value;
-        if (value instanceof Date) type = 'date';
+        if (value instanceof Date) { type = 'date'; }
 
         switch (type) {
         case 'string':
@@ -113,7 +114,7 @@ export class FilterBuilder<T> {
     }
 
     public generate(): string {
-        if (!this.filters || this.filters.length < 1) return '';
+        if (!this.filters || this.filters.length < 1) { return ''; }
         this.verifyLastElement();
         return this.filters.map(f => f).join(' ');
     }

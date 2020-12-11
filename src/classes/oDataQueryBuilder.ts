@@ -1,7 +1,7 @@
-import { OrderBy } from "../enums/orderByEnum";
+import { OrderBy } from '../enums/orderByEnum';
 import { FilterBuilder } from './filterBuilder';
 import { BuilderOptions } from '../interfaces/builderOptions';
-import { PropertyClass, PropertyObjectType, PropertyType } from "./propertyClass";
+import { PropertyClass, PropertyObjectType, PropertyType } from './propertyClass';
 
 export class ODataQueryBuilder<T> {
     private selects: string[] = [];
@@ -15,11 +15,12 @@ export class ODataQueryBuilder<T> {
     constructor(
         private options?: BuilderOptions,
         private extendedPropName?: string) {
-            if (!this.options)
-                this.options = {ignoreNull: true};
+            if (!this.options) {
+                this.options = { ignoreNull: true };
+            }
     }
 
-    public clear() {
+    public clear(): void {
         this.selects = [];
         this.filters = [];
         this.orderBys = [];
@@ -28,18 +29,17 @@ export class ODataQueryBuilder<T> {
         this.topValue = null;
         this.doCount = null;
     }
-    
+
     public orderBy(field: PropertyType<T>): ODataQueryBuilder<T> {
-        return this.orderByInternal(field, OrderBy.Asc)
+        return this.orderByInternal(field, OrderBy.Asc);
     }
 
     public orderByDesc(field: PropertyType<T>): ODataQueryBuilder<T> {
-        return this.orderByInternal(field, OrderBy.Desc)
+        return this.orderByInternal(field, OrderBy.Desc);
     }
 
     private orderByInternal(field: PropertyType<T>, order: OrderBy): ODataQueryBuilder<T> {
-        if (!field || field.length == 0)
-            return this;
+        if (!field || field.length === 0) { return this; }
 
         return this.freeOrderBy(`${PropertyClass.getPropertyName(field)} ${order}`);
     }
@@ -50,11 +50,15 @@ export class ODataQueryBuilder<T> {
         return this;
     }
 
-    public expand(field: PropertyObjectType<T>, func?: (query: ODataQueryBuilder<T>) => void, options?: BuilderOptions): ODataQueryBuilder<T> {
-        if (options)
+    public expand(field: PropertyObjectType<T>,
+                  func?: (query: ODataQueryBuilder<T>) => void,
+                  options?: BuilderOptions): ODataQueryBuilder<T> {
+        if (options) {
             options = this.options;
+        }
 
-        let expandQuery = new ODataQueryBuilder<T>(options, PropertyClass.getPropertyObjectName(field));
+        const expandQuery =
+            new ODataQueryBuilder<T>(options, PropertyClass.getPropertyObjectName(field));
 
         if (func !== null) {
             func(expandQuery);
@@ -66,14 +70,15 @@ export class ODataQueryBuilder<T> {
     }
 
     public filter(predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>): this {
-        if (this.filters.length > 1)
+        if (this.filters.length > 1) {
             this.filters.push('and');
+        }
 
         this.filters.push(
             predicate(new FilterBuilder(this.options)).generate()
         );
         return this;
-    };
+    }
 
     public skip(skip: number): ODataQueryBuilder<T> {
         this.skipValue = skip;
@@ -91,9 +96,11 @@ export class ODataQueryBuilder<T> {
     }
 
     public select(...fields: PropertyType<T>[]): ODataQueryBuilder<T> {
-        let selects: string[] = [];
-        for (let field of fields)
+        const selects: string[] = [];
+        for (const field of fields) {
             selects.push(PropertyClass.getPropertyName(field));
+        }
+
         this.selects = selects;
         return this;
     }
@@ -103,81 +110,76 @@ export class ODataQueryBuilder<T> {
         return this;
     }
 
-    private static checkAndAppend(result: string, prefix: string, delimiter: string, variable: any): string {
-        if (variable == null)
-            return result;
+    private checkAndAppend(result: string, prefix: string, delimiter: string, variable: any): string {
+        if (variable == null) { return result; }
 
-        if (typeof variable == "number" && variable == 0) {
-            return result;
-        }
+        if (typeof variable === 'number' && variable === 0) { return result; }
 
-        if (typeof variable == "boolean" && !variable) {
-            return result;
-        }
+        if (typeof variable === 'boolean' && !variable) { return result; }
 
-        if (variable)
-            return ODataQueryBuilder.append(result, prefix, delimiter, variable);
+        if (variable) { return this.append(result, prefix, delimiter, variable); }
 
         return result;
     }
 
-    private static append(result: string, prefix: string, delimiter: string, variable: any): string {
-        let length = result.length;
+    private append(result: string, prefix: string, delimiter: string, variable: any): string {
+        const length = result.length;
 
-        if (length > 0)
+        if (length > 0) {
             result = `${result}${delimiter}${prefix}=${variable}`;
-        else
+        } else {
             result = `${prefix}=${variable}`;
+        }
 
         return result;
     }
 
     public generate(): string {
-        let isExpand = this.extendedPropName != null && this.extendedPropName.length > 0;
+        const isExpand = this.extendedPropName != null && this.extendedPropName.length > 0;
 
-        let query = "";
-        let delimiter = isExpand ? ';' : '&';
+        let query = '';
+        const delimiter = isExpand ? ';' : '&';
 
-        if (this.topValue != 0) {
-            query = ODataQueryBuilder.checkAndAppend(query, '$top', delimiter, this.topValue);
+        if (this.topValue !== 0) {
+            query = this.checkAndAppend(query, '$top', delimiter, this.topValue);
         }
 
-        if (this.skipValue != 0) {
-            query = ODataQueryBuilder.checkAndAppend(query, '$skip', delimiter, this.skipValue);
+        if (this.skipValue !== 0) {
+            query = this.checkAndAppend(query, '$skip', delimiter, this.skipValue);
         }
 
-        query = ODataQueryBuilder.checkAndAppend(query, '$count', delimiter, this.doCount);
+        query = this.checkAndAppend(query, '$count', delimiter, this.doCount);
 
         if (this.filters.length > 0) {
-            query = ODataQueryBuilder.checkAndAppend(query, '$filter', delimiter, this.filters.join(` and `))
+            query = this.checkAndAppend(query, '$filter', delimiter, this.filters.join(` and `));
         }
 
         if (this.orderBys.length > 0) {
-            query = ODataQueryBuilder.checkAndAppend(query, '$orderby', delimiter, this.orderBys.join(','));
+            query = this.checkAndAppend(query, '$orderby', delimiter, this.orderBys.join(','));
         }
 
         if (this.selects.length > 0) {
-            query = ODataQueryBuilder.checkAndAppend(query, '$select', delimiter, this.selects.join(','))
+            query = this.checkAndAppend(query, '$select', delimiter, this.selects.join(','));
         }
 
         if (this.expands.length > 0) {
-            let result = [];
-            for (let item of this.expands) {
-                let compiled = item.generate();
-
-                result.push(compiled);
+            const result = [];
+            for (const item of this.expands) {
+                result.push(item.generate());
             }
 
             if (result.length > 0) {
-                query = ODataQueryBuilder.checkAndAppend(query, '$expand', delimiter, result.join(','));
+                query = this.checkAndAppend(query, '$expand', delimiter, result.join(','));
             }
         }
 
-        if (query.length > 0 && isExpand)
+        if (query.length > 0 && isExpand) {
             query = `(${query})`;
+        }
 
-        if (isExpand)
+        if (isExpand) {
             query = `${this.extendedPropName}${query}`;
+        }
 
         return query;
     }
