@@ -2,6 +2,7 @@ export class Employee {
     name: string;
     salary: number;
     age: number;
+    hasChildrens: boolean;
     motherName: string;
     fatherName: string;
     departament: Departament;

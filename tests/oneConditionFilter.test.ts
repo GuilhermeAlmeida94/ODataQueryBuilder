@@ -20,6 +20,19 @@ test('Filter with value operator', () => {
     expect(oDataQueryBuilder.generate()).toEqual(expectValue);
 });
 
+test('Filter with boolean value operator', () => {
+    //Arrange
+    const expectValue = '$filter=hasChildrens eq false';
+
+    //Act
+    oDataQueryBuilder.clear();
+    oDataQueryBuilder
+        .filter(f => f.valueFilter(e => e.hasChildrens, ComparisonOperator.Equal, employee.hasChildrens));
+        
+    //Assert
+    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+});
+
 test('Filter with string operator', () => {
     //Arrange
     const expectValue = '$filter=contains(name, \'Will\')';

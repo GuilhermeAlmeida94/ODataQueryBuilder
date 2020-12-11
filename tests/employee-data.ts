@@ -10,6 +10,7 @@ export class EmployeeData {
             age: null,
             motherName: null,
             fatherName: null,
+            hasChildrens: false,
             departament:
             {
                 name: 'Sales'

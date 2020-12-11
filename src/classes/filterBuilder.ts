@@ -13,7 +13,7 @@ export class FilterBuilder<T> {
         private options: BuilderOptions) {}
 
     public valueFilter(field: PropertyType<T>, operator: ComparisonOperator, value: valueFilterType): this {
-        if (!this.options.ignoreNull || value) {
+        if (!this.options.ignoreNull || value !== null) {
             if (!Array.isArray(value)) {
                 this.filters.push(`${PropertyClass.getPropertyName(field)} ${operator} ${this.getValue(value)}`);
             }
