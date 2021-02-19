@@ -1,4 +1,4 @@
 export enum OrderBy {
-    Asc = <any>"asc",
-    Desc = <any>"desc"
+    Asc = 'asc' as any,
+    Desc = 'desc' as any
 }
