@@ -1,16 +1,16 @@
-import { ComparisonOperator } from '../enums/comparisonOperator';
-import { StringOperator } from '../enums/stringOperator';
-import { BuilderOptions } from '../interfaces/builderOptions';
-import { PropertyClass, PropertyType } from './propertyClass';
+import { ComparisonOperator } from './enums/comparison-operator';
+import { StringOperator } from './enums/string-operator';
+import { OdataQueryOptions } from './interfaces/odata-query-options';
+import { PropertyClass, PropertyType } from './property-class';
 
 type valueFilterType = string | number | boolean | Date | Array<valueFilterType>;
 
-export class FilterBuilder<T> {
+export class FilterMaker<T> {
 
     private filters: string[] = [];
 
     constructor(
-        private options: BuilderOptions) {}
+        private options: OdataQueryOptions) {}
 
     public valueFilter(field: PropertyType<T>, operator: ComparisonOperator, value: valueFilterType): this {
         if (!this.options.ignoreNull || value !== null) {
@@ -18,7 +18,7 @@ export class FilterBuilder<T> {
                 this.filters.push(`${PropertyClass.getPropertyName(field)} ${operator} ${this.getValue(value)}`);
             }
             else {
-                const innerFilter = new FilterBuilder<T>(this.options);
+                const innerFilter = new FilterMaker<T>(this.options);
                 for (const item of value) {
                     innerFilter.valueFilter(field, operator, item).or();
                 }
@@ -36,7 +36,7 @@ export class FilterBuilder<T> {
                 this.filters.push(`${operator}(${PropertyClass.getPropertyName(field)}, '${value.trim()}')`);
             }
             else {
-                const innerFilter = new FilterBuilder<T>(this.options);
+                const innerFilter = new FilterMaker<T>(this.options);
                 for (const item of value) {
                     innerFilter.stringFilter(field, operator, item).or();
                 }
@@ -80,16 +80,16 @@ export class FilterBuilder<T> {
         return this.addLogicalOperator('or');
     }
 
-    public andFilter = (predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) => {
+    public andFilter = (predicate: (filter: FilterMaker<T>) => FilterMaker<T>) => {
         return this.logicalFilter('and', predicate);
     }
 
-    public orFilter = (predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>) => {
+    public orFilter = (predicate: (filter: FilterMaker<T>) => FilterMaker<T>) => {
         return this.logicalFilter('or', predicate);
     }
 
-    private logicalFilter(logical: string, predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>): this {
-        const innerFilter = predicate(new FilterBuilder(this.options)).generate();
+    private logicalFilter(logical: string, predicate: (filter: FilterMaker<T>) => FilterMaker<T>): this {
+        const innerFilter = predicate(new FilterMaker(this.options)).generate();
 
         if (innerFilter){
             this.addLogicalOperator(logical);

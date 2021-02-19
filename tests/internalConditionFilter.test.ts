@@ -1,26 +1,26 @@
-import { ODataQueryBuilder } from "../src/classes/oDataQueryBuilder";
-import { StringOperator } from "../src/enums/stringOperator";
-import { ComparisonOperator } from "../src/enums/comparisonOperator";
+import { OdataQueryMaker } from "../src/odata-query-maker";
+import { StringOperator } from "../src/enums/string-operator";
+import { ComparisonOperator } from "../src/enums/comparison-operator";
 import { Employee } from "./employee";
 import { EmployeeData } from "./employee-data";
 
 const employee = new EmployeeData().employee;
-let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
+let odataQueryMaker = new OdataQueryMaker<Employee>();
 
 test('Filter with string operator and internal condition (value or string operator)', () => {
     //Arrange
     const expectValue = '$filter=contains(name, \'Will\') and (salary gt 5000 or startswith(departament/name, \'Sales\'))';
 
     //Act
-    oDataQueryBuilder.clear();
-    oDataQueryBuilder
+    odataQueryMaker.clear();
+    odataQueryMaker
         .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, employee.name)
                         .andFilter(f2 => f2.valueFilter(e => e.salary, ComparisonOperator.Greater, employee.salary).or()
                                             .stringFilter(e => e.departament.name, StringOperator.StartsWith, employee.departament.name))
                         );
         
     //Assert
-    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+    expect(odataQueryMaker.generate()).toEqual(expectValue);
 });
 
 test('Removing unecessary \'and\' and not use \'or\' thanks to null value from filter 1', () => {
@@ -28,15 +28,15 @@ test('Removing unecessary \'and\' and not use \'or\' thanks to null value from f
     const expectValue = '$filter=contains(name, \'Will\') and (startswith(departament/name, \'Sales\'))';
 
     //Act
-    oDataQueryBuilder.clear();
-    oDataQueryBuilder
+    odataQueryMaker.clear();
+    odataQueryMaker
         .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, employee.name)
                         .andFilter(f2 => f2.and().valueFilter(e => e.age, ComparisonOperator.Greater, employee.age).or()
                                             .stringFilter(e => e.departament.name, StringOperator.StartsWith, employee.departament.name))
                         );
         
     //Assert
-    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+    expect(odataQueryMaker.generate()).toEqual(expectValue);
 });
 
 test('Removing unecessary \'and\' and not use \'or\' thanks to null value from filter 2', () => {
@@ -44,14 +44,14 @@ test('Removing unecessary \'and\' and not use \'or\' thanks to null value from f
     const expectValue = '$filter=contains(name, \'Will\')';
 
     //Act
-    oDataQueryBuilder.clear();
-    oDataQueryBuilder
+    odataQueryMaker.clear();
+    odataQueryMaker
         .filter(f => f.stringFilter(e => e.name, StringOperator.Contains, employee.name)
                         .andFilter(f2 => f2.and().valueFilter(e => e.age, ComparisonOperator.Greater, employee.age).or())
                         );
         
     //Assert
-    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+    expect(odataQueryMaker.generate()).toEqual(expectValue);
 });
 
 test('Filter with null condition and internal filter', () => {
@@ -59,8 +59,8 @@ test('Filter with null condition and internal filter', () => {
     const expectValue = '$filter=(salary eq 5000)';
 
     //Act
-    oDataQueryBuilder.clear();
-    oDataQueryBuilder
+    odataQueryMaker.clear();
+    odataQueryMaker
         .filter(f => f
                 .valueFilter(e => e.age, ComparisonOperator.Equal, employee.age)
                 .andFilter(f2 => f2
@@ -69,5 +69,5 @@ test('Filter with null condition and internal filter', () => {
         );
         
     //Assert
-    expect(oDataQueryBuilder.generate()).toEqual(expectValue);
+    expect(odataQueryMaker.generate()).toEqual(expectValue);
 });

@@ -1,4 +1,3 @@
-
 export type PropertyType<T> = (obj: T) => string | number | boolean | null;
 export type PropertyObjectType<T> = (obj: T) => object;
 
