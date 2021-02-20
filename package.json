@@ -1,22 +1,25 @@
 {
-  "name": "ODataQueryBuilder",
-  "version": "0.1.0",
+  "name": "odata-query-maker",
+  "version": "1.0.0",
+  "description": "A typescript library to make OData queries",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GuiPhb/ODataQueryBuilder"
+    "url": "git+https://github.com/GuilhermeAlmeida94/odata-query-maker"
   },
   "bugs": {
-    "url": "https://github.com/GuiPhb/ODataQueryBuilder/issues"
+    "url": "https://github.com/GuilhermeAlmeida94/odata-query-maker/issues"
   },
-  "homepage": "https://github.com/GuiPhb/ODataQueryBuilder",
+  "homepage": "https://github.com/GuilhermeAlmeida94/odata-query-maker",
   "contributors": [
     {
       "name": "Guilherme Almeida",
-      "url": "https://github.com/GuiPhb"
+      "url": "https://github.com/GuilhermeAlmeida94"
     }
   ],
   "keywords": [
