@@ -1,19 +1,19 @@
-import { OrderBy } from '../enums/orderByEnum';
+import { OrderBy } from './enums/order-by';
 import { FilterBuilder } from './filterBuilder';
-import { BuilderOptions } from '../interfaces/builderOptions';
-import { PropertyClass, PropertyObjectType, PropertyType } from './propertyClass';
+import { OdataQueryOptions } from './interfaces/odata-query-options';
+import { PropertyClass, PropertyObjectType, PropertyType } from './property-class';
 
-export class ODataQueryBuilder<T> {
+export class OdataQueryMaker<T> {
     private selects: string[] = [];
     private filters: string[] = [];
     private orderBys: string[] = [];
-    private expands: ODataQueryBuilder<T>[] = [];
+    private expands: OdataQueryMaker<T>[] = [];
     private skipValue: number;
     private topValue: number;
     private doCount: boolean;
 
     constructor(
-        private options?: BuilderOptions,
+        private options?: OdataQueryOptions,
         private extendedPropName?: string) {
             if (!this.options) {
                 this.options = { ignoreNull: true };
@@ -30,35 +30,35 @@ export class ODataQueryBuilder<T> {
         this.doCount = null;
     }
 
-    public orderBy(field: PropertyType<T>): ODataQueryBuilder<T> {
+    public orderBy(field: PropertyType<T>): OdataQueryMaker<T> {
         return this.orderByInternal(field, OrderBy.Asc);
     }
 
-    public orderByDesc(field: PropertyType<T>): ODataQueryBuilder<T> {
+    public orderByDesc(field: PropertyType<T>): OdataQueryMaker<T> {
         return this.orderByInternal(field, OrderBy.Desc);
     }
 
-    private orderByInternal(field: PropertyType<T>, order: OrderBy): ODataQueryBuilder<T> {
+    private orderByInternal(field: PropertyType<T>, order: OrderBy): OdataQueryMaker<T> {
         if (!field || field.length === 0) { return this; }
 
         return this.freeOrderBy(`${PropertyClass.getPropertyName(field)} ${order}`);
     }
 
-    public freeOrderBy(orderBy: string): ODataQueryBuilder<T> {
+    public freeOrderBy(orderBy: string): OdataQueryMaker<T> {
         this.orderBys.push(orderBy);
 
         return this;
     }
 
     public expand(field: PropertyObjectType<T>,
-                  func?: (query: ODataQueryBuilder<T>) => void,
-                  options?: BuilderOptions): ODataQueryBuilder<T> {
+                  func?: (query: OdataQueryMaker<T>) => void,
+                  options?: OdataQueryOptions): OdataQueryMaker<T> {
         if (options) {
             options = this.options;
         }
 
         const expandQuery =
-            new ODataQueryBuilder<T>(options, PropertyClass.getPropertyObjectName(field));
+            new OdataQueryMaker<T>(options, PropertyClass.getPropertyObjectName(field));
 
         if (func !== null) {
             func(expandQuery);
@@ -80,22 +80,22 @@ export class ODataQueryBuilder<T> {
         return this;
     }
 
-    public skip(skip: number): ODataQueryBuilder<T> {
+    public skip(skip: number): OdataQueryMaker<T> {
         this.skipValue = skip;
         return this;
     }
 
-    public top(top: number): ODataQueryBuilder<T> {
+    public top(top: number): OdataQueryMaker<T> {
         this.topValue = top;
         return this;
     }
 
-    public count(): ODataQueryBuilder<T> {
+    public count(): OdataQueryMaker<T> {
         this.doCount = true;
         return this;
     }
 
-    public select(...fields: PropertyType<T>[]): ODataQueryBuilder<T> {
+    public select(...fields: PropertyType<T>[]): OdataQueryMaker<T> {
         const selects: string[] = [];
         for (const field of fields) {
             selects.push(PropertyClass.getPropertyName(field));
@@ -105,7 +105,7 @@ export class ODataQueryBuilder<T> {
         return this;
     }
 
-    public freeSelect(...fields: string[]): ODataQueryBuilder<T> {
+    public freeSelect(...fields: string[]): OdataQueryMaker<T> {
         this.selects = fields;
         return this;
     }

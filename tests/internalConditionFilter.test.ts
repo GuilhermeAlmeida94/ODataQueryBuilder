@@ -1,11 +1,11 @@
-import { ODataQueryBuilder } from "../src/classes/oDataQueryBuilder";
-import { StringOperator } from "../src/enums/stringOperator";
-import { ComparisonOperator } from "../src/enums/comparisonOperator";
+import { OdataQueryMaker } from "../src/odata-query-maker";
+import { StringOperator } from "../src/enums/string-operator";
+import { ComparisonOperator } from "../src/enums/comparison-operator";
 import { Employee } from "./employee";
 import { EmployeeData } from "./employee-data";
 
 const employee = new EmployeeData().employee;
-let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
+let oDataQueryBuilder = new OdataQueryMaker<Employee>();
 
 test('Filter with string operator and internal condition (value or string operator)', () => {
     //Arrange

@@ -1,7 +1,7 @@
-import { ComparisonOperator } from '../enums/comparisonOperator';
-import { StringOperator } from '../enums/stringOperator';
-import { BuilderOptions } from '../interfaces/builderOptions';
-import { PropertyClass, PropertyType } from './propertyClass';
+import { ComparisonOperator } from './enums/comparison-operator';
+import { StringOperator } from './enums/string-operator';
+import { OdataQueryOptions } from './interfaces/odata-query-options';
+import { PropertyClass, PropertyType } from './property-class';
 
 type valueFilterType = string | number | boolean | Date | Array<valueFilterType>;
 
@@ -10,7 +10,7 @@ export class FilterBuilder<T> {
     private filters: string[] = [];
 
     constructor(
-        private options: BuilderOptions) {}
+        private options: OdataQueryOptions) {}
 
     public valueFilter(field: PropertyType<T>, operator: ComparisonOperator, value: valueFilterType): this {
         if (!this.options.ignoreNull || value !== null) {

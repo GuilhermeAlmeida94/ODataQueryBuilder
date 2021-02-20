@@ -1,11 +1,11 @@
-import { ODataQueryBuilder } from "../src/classes/oDataQueryBuilder";
-import { StringOperator } from "../src/enums/stringOperator";
-import { ComparisonOperator } from "../src/enums/comparisonOperator";
+import { OdataQueryMaker } from "../src/odata-query-maker";
+import { StringOperator } from "../src/enums/string-operator";
+import { ComparisonOperator } from "../src/enums/comparison-operator";
 import { Employee } from "./employee";
 import { EmployeeData } from "./employee-data";
 
 const employee = new EmployeeData().employee;
-let oDataQueryBuilder = new ODataQueryBuilder<Employee>();
+let oDataQueryBuilder = new OdataQueryMaker<Employee>();
 
 test('Filter with value and String operator', () => {
     //Arrange
@@ -39,7 +39,7 @@ test('Filter with not ignoring value null and String operator', () => {
     //Arrange
     const expectValue = '$filter=age eq null and contains(name, \'Will\')';
     let builderOptions = {ignoreNull: false};
-    let oDataQueryBuilder2 = new ODataQueryBuilder<Employee>(builderOptions);
+    let oDataQueryBuilder2 = new OdataQueryMaker<Employee>(builderOptions);
 
     //Act
     oDataQueryBuilder2
@@ -53,7 +53,7 @@ test('Filter with not ignoring value null and String operator', () => {
 test('Filter with multiple conditions', () => {
     //Arrange
     const expectValue = '$filter=contains(name, \'Will\')';
-    let oDataQueryBuilder2 = new ODataQueryBuilder<Employee>();
+    let oDataQueryBuilder2 = new OdataQueryMaker<Employee>();
 
     //Act
     oDataQueryBuilder2
