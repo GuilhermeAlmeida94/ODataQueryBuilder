@@ -1,5 +1,5 @@
 import { OrderBy } from './enums/order-by';
-import { FilterBuilder } from './filterBuilder';
+import { FilterMaker } from './filter-maker';
 import { OdataQueryOptions } from './interfaces/odata-query-options';
 import { PropertyClass, PropertyObjectType, PropertyType } from './property-class';
 
@@ -69,13 +69,13 @@ export class OdataQueryMaker<T> {
         return this;
     }
 
-    public filter(predicate: (filter: FilterBuilder<T>) => FilterBuilder<T>): this {
+    public filter(predicate: (filter: FilterMaker<T>) => FilterMaker<T>): this {
         if (this.filters.length > 1) {
             this.filters.push('and');
         }
 
         this.filters.push(
-            predicate(new FilterBuilder(this.options)).generate()
+            predicate(new FilterMaker(this.options)).generate()
         );
         return this;
     }
